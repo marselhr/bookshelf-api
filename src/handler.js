@@ -2,11 +2,10 @@ const {nanoid} = require('nanoid')
 const books = require('./books')
 
 const addBookHandler = (request, h) => {
-  const {name, year, author, summary, publisher, pageCount, readPage} = request.payload
+  const {name, year, author, summary, publisher, pageCount, readPage, reading} = request.payload
 
   const id = nanoid(16)
   const finished = Boolean(readPage === pageCount)
-  const reading = Boolean(false)
   const insertedAt = new Date().toISOString()
   const updatedAt = insertedAt
 
@@ -104,7 +103,7 @@ const getBookByIdHandler = (request, h) => {
 
 const updateBookByIdHandler = (request, h) => {
   const {id} = request.params;
-  const {name, year, author, summary, publisher, pageCount, readPage, reading = false} = request.payload
+  const {name, year, author, summary, publisher, pageCount, readPage, reading} = request.payload
 
   const updatedAt = new Date().toISOString()
   const finished = Boolean(readPage === pageCount)
@@ -161,9 +160,33 @@ const updateBookByIdHandler = (request, h) => {
   return response
 }
 
+
+
+const deleteBookByIdHandler = (request, h) => {
+  const {id} = request.params;
+
+  const index = books.findIndex((b) => b.id === id);
+
+  if (index !== -1) {
+    books.splice(index, 1)
+    return {
+      status: 'success',
+      message: 'Buku berhasil Dihapus',
+    };
+  }
+
+  const response = h.response({
+    status: 'fail',
+    message: 'Buku gagal dihapus. Id tidak ditemukan'
+  })
+
+  response.code(404)
+  return response
+}
 module.exports = {
   addBookHandler,
   getBooksHandler,
   getBookByIdHandler,
-  updateBookByIdHandler
+  updateBookByIdHandler,
+  deleteBookByIdHandler
 }
