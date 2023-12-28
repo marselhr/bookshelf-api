@@ -20,6 +20,7 @@ const addBookHandler = (request, h) => {
     publisher,
     pageCount,
     readPage,
+    finished,
     reading,
     insertedAt,
     updatedAt
@@ -63,7 +64,24 @@ const addBookHandler = (request, h) => {
   }
 }
 
+const getBooksHandler = (request, h) => {
+  if (books.length < 1) {
+    const response = h.response({
+      status: 'success',
+      data: {books}
+    })
 
+    return response;
+  }
+
+  return h.response({
+    status: 'success',
+    data: {
+      books
+    }
+  })
+}
 module.exports = {
   addBookHandler,
-};
+  getBooksHandler
+}
